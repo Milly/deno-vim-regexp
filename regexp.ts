@@ -188,6 +188,7 @@ export class VimRegExp extends RegExp {
         throw new VimRegExpSyntaxError(cause.message, { source: vimSource, cause });
       }
       // Re-throw unknown errors.
+      /* istanbul ignore next */
       throw cause;
     }
     this.#options = mergedOptions;
@@ -395,8 +396,9 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
   } = <T>(r: RegExp, parser?: (m: Match) => T): T | Match | undefined => {
     const m = vimPattern.slice(index).join("").match(r);
     if (m) {
+      /* istanbul ignore next */
       if (m.index !== 0) {
-        throw new Error("Implementation error: Must match at the lead");
+        throw new Error(`Implementation error: Must match at the lead: ${r}`);
       }
       try {
         const res = parser ? parser(m as Match) : m as Match;
@@ -452,6 +454,7 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
       // TODO: throws error?
       return "\\\\" + toCharCode(s.charCodeAt(1));
     }
+    /* istanbul ignore next */
     if (s.length !== 1) {
       throw new Error(`Implementation error: Must be single character: ${s}`);
     }
