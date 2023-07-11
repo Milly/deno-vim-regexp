@@ -132,16 +132,6 @@ export type VimRegExpOptions = {
  * Represents a Vim's regular expression.
  */
 export class VimRegExp extends RegExp {
-  /**
-   * Returns `true` if an object is a `RegExp`.
-   *
-   * @param obj - Object to check.
-   * @returns Whether the object is a `RegExp` object.
-   */
-  static isRegExp(obj: unknown): obj is RegExp {
-    return Object.prototype.toString.call(obj) === "[object RegExp]";
-  }
-
   #options: Required<VimRegExpOptions>;
   #vimSource: string;
 
