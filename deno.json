@@ -1,0 +1,13 @@
+{
+  "lock": false,
+  "tasks": {
+    "cache": "deno cache **/*.ts",
+    "check": "deno lint && deno fmt --check && deno check **/*.ts",
+    "test": "deno test --doc --import-map=test_import_map.json --coverage=.coverage",
+    "coverage": "deno coverage .coverage --lcov > coverage.lcov"
+  },
+  "fmt": {
+    "lineWidth": 98,
+    "proseWrap": "preserve"
+  }
+}
