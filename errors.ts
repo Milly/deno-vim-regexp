@@ -16,7 +16,7 @@ export class VimRegExpSyntaxError extends SyntaxError implements SourceSyntaxErr
   }
   source?: string;
   index?: number;
-  constructor(message: string, options: SourceSyntaxErrorOptions = {}) {
+  constructor(message?: string, options: SourceSyntaxErrorOptions = {}) {
     const { source, index, ...rest } = options;
     const at = index !== undefined ? `:${index}` : "";
     const src = source ? `: /${source}/${at}` : "";
@@ -41,7 +41,7 @@ export class CharClassSyntaxError extends SyntaxError implements SourceSyntaxErr
   }
   source?: string;
   index?: number;
-  constructor(message: string, options: SourceSyntaxErrorOptions = {}) {
+  constructor(message?: string, options: SourceSyntaxErrorOptions = {}) {
     const { source, index, ...rest } = options;
     const at = index !== undefined ? `:${index}` : "";
     const src = source ? `: "${source}"${at}` : "";
