@@ -15,7 +15,21 @@ export type PatternType = "isfname" | "isident" | "iskeyword" | "isprint";
  * Optional argument type for the `patternToCharClass` function.`
  */
 export type PatternToCharClassOptions = {
+  /**
+   * Type of character pattern.
+   *
+   * @default {undefined}
+   */
   type?: PatternType;
+
+  /**
+   * Set to `false` to disable Unicode range.
+   *
+   * If the option is enabled, `RegExp` must have the `v` flag.
+   *
+   * @default {true}
+   */
+  unicode?: boolean;
 };
 
 /**
@@ -126,7 +140,6 @@ const ASCII_WORD_CHARS = [
  *
  * @param pattern - Pattern string of Vim's `isfname` option.
  * @param [options] - Optional arguments. (default `{}`)
- * @param [options.type] - Type of character pattern.
  * @returns A string representing the character class in regular expression.
  *
  * @throws CharClassSyntaxError
@@ -137,7 +150,9 @@ const ASCII_WORD_CHARS = [
  * import { patternToCharClass } from "https://deno.land/x/vim_regexp@VERSION/charclass.ts";
  *
  * const isfname = "@,48-57,/,.,-,_,+,,,#,$,%,~,=";
- * const fnameRegex = new RegExp(`${ patternToCharClass(isfname) }+`);
+ * const fnameRegex = new RegExp(`${
+ *   patternToCharClass(isfname, { type: 'isfname', unicode: true })
+ * }+`, "v");
  *
  * const fname = "   /path/to/filename.ext  ".match(fnameRegex);
  * console.log(fname?.[0]); // Output: "/path/to/filename.ext"
@@ -147,7 +162,7 @@ export function patternToCharClass(
   pattern: string,
   options: PatternToCharClassOptions = {},
 ): string {
-  const { type } = options;
+  const { type, unicode = true } = options;
 
   // Collect chars from pattern.
   const charSet = new Set<number>();
@@ -188,6 +203,10 @@ export function patternToCharClass(
   if (forcePattern) {
     parse(forcePattern);
   }
+  // Remove Unicode ranges.
+  if (!unicode) {
+    setChars(range(0xa0, 0xff), true);
+  }
 
   // Generate RegExp char class.
   const chars = [...charSet].toSorted((a, b) => a - b);
@@ -208,9 +227,13 @@ export function patternToCharClass(
     typeof c === "number" ? "\\x" + `0${c.toString(16)}`.slice(-2) : c
   ).join("");
 
-  // Add unicode class.
-  const unicodeClass = UNICODE_CHAR_CLASSES[type as PatternType] ?? "";
-  return `[${charPattern}${unicodeClass}]`;
+  if (unicode) {
+    // Add unicode class.
+    const unicodeClass = UNICODE_CHAR_CLASSES[type as PatternType] ?? "";
+    return `[${charPattern}${unicodeClass}]`;
+  } else {
+    return `[${charPattern}]`;
+  }
 }
 
 function range(start: number, end: number): number[] {
