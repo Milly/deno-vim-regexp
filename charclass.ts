@@ -94,24 +94,33 @@ const ASCII_WORD_CHARS = [
  * character numbers with `-` in between.  A character number can be a
  * decimal number between 0 and 255 or the ASCII character itself (does
  * not work for digits).  Example:
+ *
  *         `"_,-,128-140,#-43"`    (include `_` and `-` and the range
  *                                 128 to 140 and `#` to 43)
+ *
  * If a part starts with `^`, the following character number or range
  * will be excluded from the option.  The option is interpreted from left
  * to right.  Put the excluded character after the range where it is
  * included.  To include `^` itself use it as the last character of the
  * option or the end of a range.  Example:
+ *
  *         `"^a-z,#,^"`      (exclude `a` to `z`, include `#` and `^`)
+ *
  * If the character is `@`, all characters where isalpha() returns TRUE
  * are included.  Normally these are the characters a to z and A to Z,
  * plus accented characters.  To include `@` itself use "@-@".  Examples:
+ *
  *         `"@,^a-z"`      All alphabetic characters, excluding lower
  *                         case ASCII letters.
  *         `"a-z,A-Z,@-@"` All letters plus the `@` character.
+ *
  * A comma can be included by using it where a character number is
  * expected.  Example:
+ *
  *         `"48-57,,,_"`   Digits, comma and underscore.
+ *
  * A comma can be excluded by prepending a `^`.  Example:
+ *
  *         `" -~,^,,9"`    All characters from space to `~`, excluding
  *                         comma, plus `<Tab>`.
  *
