@@ -138,7 +138,6 @@ export class VimRegExp extends RegExp {
   /**
    * Creates a new instance of the VimRegExp class.
    *
-   * Always parsed with Vim's `magic` options is set.
    * Only some Vim regular expressions can be parsed.
    *
    * @param pattern - Vim's regular expression pattern, or an object of VimRegExp.
