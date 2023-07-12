@@ -187,8 +187,7 @@ export class VimRegExp extends RegExp {
       if (cause instanceof SyntaxError) {
         throw new VimRegExpSyntaxError(cause.message, { source: vimSource, cause });
       }
-      // Re-throw unknown errors.
-      /* istanbul ignore next */
+      // Re-throw unexpected errors.
       throw cause;
     }
     this.#options = mergedOptions;
@@ -396,24 +395,21 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
   } = <T>(r: RegExp, parser?: (m: Match) => T): T | Match | undefined => {
     const m = vimPattern.slice(index).join("").match(r);
     if (m) {
-      /* istanbul ignore next */
-      if (m.index !== 0) {
-        throw new Error(`Implementation error: Must match at the lead: ${r}`);
-      }
-      try {
-        const res = parser ? parser(m as Match) : m as Match;
-        index += [...m[0]].length;
-        return res;
-      } catch (_) { /* Ignore error */ }
+      const res = parser ? parser(m as Match) : m as Match;
+      index += [...m[0]].length;
+      return res;
     }
   };
   const ensureNext: {
     (r: RegExp): Match;
     <T>(r: RegExp, parser: (m: Match) => T): T;
   } = <T>(r: RegExp, parser?: (m: Match) => T): T | Match => {
-    const res = maybeNext(r, ...(parser ? [parser] : []) as []);
+    const res = parser ? maybeNext(r, parser) : maybeNext(r);
     if (res === undefined) {
-      throw new VimRegExpSyntaxError("Invalid keyword", { source, index: atomIndex });
+      throw new VimRegExpSyntaxError(
+        `Invalid keyword: ${getAtom()}`,
+        { source, index: atomIndex },
+      );
     }
     return res;
   };
@@ -453,10 +449,6 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
       }
       // TODO: throws error?
       return "\\\\" + toCharCode(s.charCodeAt(1));
-    }
-    /* istanbul ignore next */
-    if (s.length !== 1) {
-      throw new Error(`Implementation error: Must be single character: ${s}`);
     }
     if (reUnicodeSetSpecialChars.test(s)) {
       return toCharCode(s.charCodeAt(0));
@@ -562,10 +554,10 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
         case "{":
           if (backslash ? magic >= MAGIC : magic <= VERY_MAGIC) { // /\{
             assertRepeatable();
-            const p = ensureNext(/^(?<ng>-)?(?<min>[0-9]+)?(?<comma>,)?(?<max>[0-9]+)?}/);
+            const p = maybeNext(/^(?<ng>-)?(?<min>[0-9]+)?(?<comma>,)?(?<max>[0-9]+)?}/);
             if (!p) {
               throw new VimRegExpSyntaxError(
-                `Incomplete quantifier: ${getAtom()}`,
+                "Incomplete quantifier: '\\{...}'",
                 { source, index: atomIndex },
               );
             }
@@ -593,7 +585,7 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
               });
             }
             const n = maybeNext(/^[0-9]+/);
-            const p = ensureNext(/^<?[=!]/)?.[0];
+            const p = ensureNext(/^<?[=!]/)[0];
             if (n) {
               // console.warn(
               //   new UnsupportedSyntaxError(`\\@${n[0]}${p}`, { source, index }),
@@ -615,7 +607,10 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
 
     const c = vimPattern[index++];
     switch (c) {
-      case "\\":
+      case "}": // literal '}'
+        push("\\}");
+        break;
+      case "\\": // literal '\'
         push("\\\\");
         break;
       case "^":
@@ -645,16 +640,22 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
       case ".":
         push((backslash ? magic >= NOMAGIC : magic <= MAGIC) ? "[^\\n]" : "\\.");
         break;
-      case "<": {
-        const word = getCharClass("iskeyword");
-        push(`(?<!${word})(?=${word})`);
+      case "<":
+        if (backslash ? magic >= MAGIC : magic <= VERY_MAGIC) { // /~
+          const word = getCharClass("iskeyword");
+          push(`(?:(?<!${word})(?=${word}))`);
+        } else { // literal '<'
+          push("<");
+        }
         break;
-      }
-      case ">": { // \>
-        const word = getCharClass("iskeyword");
-        push(`(?<=${word})(?!${word})`);
+      case ">":
+        if (backslash ? magic >= MAGIC : magic <= VERY_MAGIC) { // \>
+          const word = getCharClass("iskeyword");
+          push(`(?:(?<=${word})(?!${word}))`);
+        } else { // literal '>'
+          push(">");
+        }
         break;
-      }
       case "~":
         if (backslash ? magic >= NOMAGIC : magic <= MAGIC) { // /~
           throw new UnsupportedSyntaxError("~", { source, index: atomIndex });
@@ -741,6 +742,7 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
               if (p) {
                 throw new UnsupportedSyntaxError(`\\%${p[0]}`, { source, index: atomIndex });
               }
+              ++index;
               throw new VimRegExpSyntaxError(
                 `Invalid keyword: ${getAtom()}`,
                 { source, index: atomIndex },
@@ -771,7 +773,7 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
         push("\\]");
         break;
       case "_":
-        if (backslash ? magic >= MAGIC : magic <= VERY_MAGIC) {
+        if (backslash) {
           const key = vimPattern[index++];
           const charClass = SINGLE_CHAR_CLASSES[key as CharClassKey];
           if (charClass) { // /\_s etc...
@@ -908,8 +910,12 @@ function parseVimPattern(source: string, options: Required<VimRegExpOptions>) {
             default:
               if (/[1-9]/.test(c)) { // /\1 ... /\9
                 push(`(?:\\${c})`);
-              } else { // unreserved backslashed characters
+              } else if (c.charCodeAt(0) <= 0x7f) { // /\ /\\
+                // Backslash followed character with no special meaning.
                 push(c);
+              } else {
+                // Backslash followed character that code 0x80 or higher.
+                push("[]");
               }
               break;
           }
