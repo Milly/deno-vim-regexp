@@ -30,13 +30,13 @@ function assertMatchResult(
 }
 
 describe("VimRegExp", () => {
+  it("has valid @example in document.", () => {
+    const regex = new VimRegExp("\\k\\+", { flags: "i" });
+    assertEquals(regex.vimSource, "\\k\\+");
+    assertEquals(regex.test("Foo"), true);
+    assertEquals(regex.test("!!!"), false);
+  });
   describe("constructor", () => {
-    it("has valid @example in document.", () => {
-      const regex = new VimRegExp("\\k\\+", { flags: "i" });
-      assertEquals(regex.vimSource, "\\k\\+");
-      assertEquals(regex.test("Foo"), true);
-      assertEquals(regex.test("!!!"), false);
-    });
     describe("arguments", () => {
       describe("pattern", () => {
         it("can specify empty string.", () => {

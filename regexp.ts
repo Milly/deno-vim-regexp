@@ -130,6 +130,16 @@ export type VimRegExpOptions = {
 
 /**
  * Represents a Vim's regular expression.
+ *
+ * @example
+ * ```ts
+ * import { VimRegExp } from "https://deno.land/x/vim_regexp@VERSION/regexp.ts";
+ *
+ * const regex = new VimRegExp("\\k\\+", { flags: "i" });
+ * console.log(regex.vimSource); // Output: "\\k\\+"
+ * console.log(regex.test("Foo")); // Output: true
+ * console.log(regex.test("!!!")); // Output: false
+ * ```
  */
 export class VimRegExp extends RegExp {
   #options: Required<VimRegExpOptions>;
@@ -138,24 +148,12 @@ export class VimRegExp extends RegExp {
   /**
    * Creates a new instance of the VimRegExp class.
    *
-   * Only some Vim regular expressions can be parsed.
-   *
    * @param pattern - Vim's regular expression pattern, or an object of VimRegExp.
    * @param options - The options or the flags.
    *
    * @throws VimRegExpSyntaxError
    * Thrown if `pattern` is invalid format.
    * Thrown if `options` contains invalid value.
-   *
-   * @example
-   * ```ts
-   * import { VimRegExp } from "https://deno.land/x/vim_regexp@VERSION/regexp.ts";
-   *
-   * const regex = new VimRegExp("\\k\\+", { flags: "i" });
-   * console.log(regex.vimSource); // Output: "\\k\\+"
-   * console.log(regex.test("Foo")); // Output: true
-   * console.log(regex.test("!!!")); // Output: false
-   * ```
    */
   // deno-lint-ignore constructor-super
   constructor(
