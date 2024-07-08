@@ -10,58 +10,72 @@ on:
       - "**.ts"
       - ".github/workflows/test.yml"
 
-defaults:
-  run:
-    shell: bash --noprofile --norc -eo pipefail {0}
+permissions:
+  contents: read
 
 jobs:
+
   check:
     strategy:
       matrix:
         runner:
           - ubuntu-latest
         deno-version:
-          - "1.x"
+          - v1.x
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v3
+
+      - uses: actions/checkout@v4
+
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: "${{ matrix.deno-version }}"
-      - uses: actions/cache@v3
+          deno-version: ${{ matrix.deno-version }}
+
+      - uses: actions/cache@v4
         with:
           key: deno-${{ hashFiles('**/*') }}
           restore-keys: deno-
-          path: |
-            /home/runner/.cache/deno/deps/https/deno.land
+          path: ~/.cache/deno
+
+      - name: Cache
+        run: deno task cache
+
       - name: Check
         run: deno task check
 
   test:
+    needs: check
     strategy:
       matrix:
         runner:
           - ubuntu-latest
         deno-version:
-          - "1.x"
+          - v1.x
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v3
+
+      - uses: actions/checkout@v4
+
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: "${{ matrix.deno-version }}"
-      - uses: actions/cache@v3
+          deno-version: ${{ matrix.deno-version }}
+
+      - uses: actions/cache@v4
         with:
           key: deno-${{ hashFiles('**/*') }}
           restore-keys: deno-
-          path: |
-            /home/runner/.cache/deno/deps/https/deno.land
+          path: ~/.cache/deno
+
       - name: Cache
         run: deno task cache
+
       - name: Test
-        run: deno task test
+        run: deno task test:coverage
+
       - name: Coverage
-        run: deno task coverage
-      - uses: codecov/codecov-action@v3
+        run: deno task coverage --lcov --output=./lcov
+
+      - uses: codecov/codecov-action@v4
         with:
-          files: ./coverage.lcov
+          files: ./lcov
+          token: ${{ secrets.CODECOV_TOKEN }}
