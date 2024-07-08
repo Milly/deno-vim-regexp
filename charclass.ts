@@ -12,7 +12,7 @@ import { CharClassSyntaxError } from "./errors.ts";
 export type PatternType = "isfname" | "isident" | "iskeyword" | "isprint";
 
 /**
- * Optional argument type for the `patternToCharClass` function.`
+ * Optional parameters of {@linkcode patternToCharClass}.
  */
 export type PatternToCharClassOptions = {
   /**
@@ -25,7 +25,7 @@ export type PatternToCharClassOptions = {
   /**
    * Set to `false` to disable Unicode range.
    *
-   * If the option is enabled, `RegExp` must have the `v` flag.
+   * If the option is enabled, {@linkcode RegExp} must have the `v` flag.
    *
    * @default {true}
    */
@@ -95,10 +95,29 @@ const ASCII_WORD_CHARS = [
 ] as const;
 
 /**
- * Converts the value of Vim's `isfname` option into a character class in RegExp.
+ * Converts the value of Vim's `isfname` option into a character class in {@linkcode RegExp}.
  * Can specify values for `isfname`, `isident`, `iskeyword`, or `isprint` options.
  *
  * The `/v` flag is required when used with `RegExp`.
+ *
+ * @param pattern - Pattern string of Vim's `isfname` option.
+ * @param options - Optional parameters.
+ * @returns A string representing the character class in regular expression.
+ *
+ * @throws {CharClassSyntaxError}
+ * Thrown if `value` is invalid format.
+ *
+ * @example
+ * ```ts
+ * import { patternToCharClass } from "https://deno.land/x/vim_regexp@VERSION/charclass.ts";
+ *
+ * const isfname = "@,48-57,/,.,-,_,+,,,#,$,%,~,=";
+ * const chars = patternToCharClass(isfname, { type: 'isfname', unicode: true });
+ * const fnameRegex = new RegExp(`${chars}+`, "v");
+ *
+ * const fname = "   /path/to/filename.ext  ".match(fnameRegex);
+ * console.log(fname?.[0]); // Output: "/path/to/filename.ext"
+ * ```
  *
  * @remarks
  * **Note that this section is taken from Vim's `:help 'isfname'`.**
@@ -137,26 +156,6 @@ const ASCII_WORD_CHARS = [
  *
  *         `" -~,^,,9"`    All characters from space to `~`, excluding
  *                         comma, plus `<Tab>`.
- *
- * @param pattern - Pattern string of Vim's `isfname` option.
- * @param [options] - Optional arguments. (default `{}`)
- * @returns A string representing the character class in regular expression.
- *
- * @throws CharClassSyntaxError
- * Thrown if `value` is invalid format.
- *
- * @example
- * ```ts
- * import { patternToCharClass } from "https://deno.land/x/vim_regexp@VERSION/charclass.ts";
- *
- * const isfname = "@,48-57,/,.,-,_,+,,,#,$,%,~,=";
- * const fnameRegex = new RegExp(`${
- *   patternToCharClass(isfname, { type: 'isfname', unicode: true })
- * }+`, "v");
- *
- * const fname = "   /path/to/filename.ext  ".match(fnameRegex);
- * console.log(fname?.[0]); // Output: "/path/to/filename.ext"
- * ```
  */
 export function patternToCharClass(
   pattern: string,
@@ -228,7 +227,7 @@ export function patternToCharClass(
   ).join("");
 
   if (unicode) {
-    // Add unicode class.
+    // Add Unicode class.
     const unicodeClass = UNICODE_CHAR_CLASSES[type as PatternType] ?? "";
     return `[${charPattern}${unicodeClass}]`;
   } else {

@@ -9,15 +9,19 @@ import { VimRegExp, VimRegExpOptions } from "./regexp.ts";
 // deno-lint-ignore no-explicit-any
 type TemplateExpressions = any[];
 
+/**
+ * Represents a Vim's regular expression template function.
+ */
 export type VimPattern = {
   /**
-   * Constructs a VimRegExp object using the provided template and expressions.
+   * Constructs a {@linkcode VimRegExp} object using the provided template and
+   * expressions.
    *
    * @param template - The template strings array.
    * @param exprs - The expressions to be inserted into the template.
    * @returns A new VimRegExp object.
    *
-   * @throws VimRegExpSyntaxError
+   * @throws {VimRegExpSyntaxError}
    * Thrown if `template` is invalid format.
    */
   (
@@ -26,31 +30,31 @@ export type VimPattern = {
   ): VimRegExp & OptionMethod;
 
   /**
-   * Optional values used in VimPattern.
+   * Optional parameters applied to this {@linkcode VimPattern}.
    */
   readonly options: VimRegExpOptions;
 };
 
 type OptionMethod = {
   /**
-   * Returns a VimRegExp object with the specified flags.
+   * Returns a {@linkcode VimRegExp} object with the specified flags.
    *
-   * @param options - The options or the flags.
-   * @returns A new VimRegExp object.
+   * @param options - Optional parameters or {@linkcode VimRegExpOptions.flags}.
+   * @returns A new `VimRegExp` object.
    *
-   * @throws VimRegExpSyntaxError
+   * @throws {VimRegExpSyntaxError}
    * Thrown if `options` contains invalid value.
    */
   opt(options: VimRegExpOptions | string): VimRegExp;
 };
 
 /**
- * Builds a VimPattern template function with the specified options.
+ * Builds a {@linkcode VimPattern} template function with the specified options.
  *
- * @param options - The VimRegExpOptions to be used.
- * @returns The built VimPattern template function.
+ * @param options - Optional parameters.
+ * @returns A `VimPattern` template function.
  *
- * @throws VimRegExpSyntaxError
+ * @throws {VimRegExpSyntaxError}
  * Thrown if `options` contains invalid value.
  *
  * @__NO_SIDE_EFFECTS__
@@ -86,9 +90,9 @@ export function buildVimPatternTemplate(
 }
 
 /**
- * A tagged template function that creates a VimRegExp object.
+ * A tagged template function that creates a {@linkcode VimRegExp} object.
  *
- * @returns A new VimRegExp object.
+ * @returns A `VimRegExp` object.
  *
  * @example
  * ```typescript
