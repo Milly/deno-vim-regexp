@@ -831,5 +831,47 @@ describe("patternToCharClass", () => {
         });
       });
     });
+    describe(".unicode", () => {
+      describe("without type options", () => {
+        it("is allowed to specify undefined.", () => {
+          assertEquals(
+            patternToCharClass("9,28-47,128-255", { unicode: undefined }),
+            "[\\x09\\x1c-\\x2f\\x80-\\xff]",
+          );
+        });
+        it("does not omits unicode range when true.", () => {
+          assertEquals(
+            patternToCharClass("9,28-47,128-255", { unicode: true }),
+            "[\\x09\\x1c-\\x2f\\x80-\\xff]",
+          );
+        });
+        it("omits unicode ranges when false.", () => {
+          assertEquals(
+            patternToCharClass("9,28-47,128-255", { unicode: false }),
+            "[\\x09\\x1c-\\x2f\\x80-\\x9f]",
+          );
+        });
+      });
+      describe("with type options", () => {
+        it("is allowed to specify undefined.", () => {
+          assertEquals(
+            patternToCharClass("9,28-47,128-255", { unicode: undefined, type: "iskeyword" }),
+            "[\\x09\\x1c-\\x2f\\x80-\\xff[[\\p{L}\\p{N}\\p{Emoji}]--[\\x00-\\xff]]]",
+          );
+        });
+        it("does not omits unicode ranges when true.", () => {
+          assertEquals(
+            patternToCharClass("9,28-47,128-255", { unicode: true, type: "iskeyword" }),
+            "[\\x09\\x1c-\\x2f\\x80-\\xff[[\\p{L}\\p{N}\\p{Emoji}]--[\\x00-\\xff]]]",
+          );
+        });
+        it("omits unicode ranges when false.", () => {
+          assertEquals(
+            patternToCharClass("9,28-47,128-255", { unicode: false, type: "iskeyword" }),
+            "[\\x09\\x1c-\\x2f\\x80-\\x9f]",
+          );
+        });
+      });
+    });
   });
 });
