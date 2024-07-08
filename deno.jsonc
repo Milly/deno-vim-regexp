@@ -1,0 +1,25 @@
+{
+  "lock": false,
+  "tasks": {
+    // Cache dependencies
+    "cache": "deno cache **/*.ts",
+    // Lint, check format and types
+    "check": "deno lint && deno fmt --check && deno check **/*.ts",
+    // Run basic tests
+    "test": "deno test",
+    // Run all tests including documentation tests, browser tests, and check tasks
+    "test:all": "deno task check && deno task test:doc",
+    // Run documentation tests
+    "test:doc": "deno task test --doc --import-map=test_import_map.json",
+    // Run tests with coverage, parallel execution and shuffling
+    "test:coverage": "deno task coverage:clean && deno task test:doc --parallel --shuffle --coverage=.coverage",
+    // Generate coverage report
+    "coverage": "deno coverage .coverage",
+    // Clear coverage data
+    "coverage:clean": "rm -rf .coverage"
+  },
+  "fmt": {
+    "lineWidth": 98,
+    "proseWrap": "preserve"
+  }
+}
