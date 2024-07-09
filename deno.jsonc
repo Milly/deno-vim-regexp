@@ -1,5 +1,4 @@
 {
-  "lock": false,
   "tasks": {
     // Cache dependencies
     "cache": "deno cache **/*.ts",
