@@ -169,6 +169,7 @@ export class VimRegExp extends RegExp {
    * Thrown if `pattern` is invalid format.
    * Thrown if `options` contains invalid value.
    */
+  // @ts-ignore: TS2377: 'super' call in try-catch
   // deno-lint-ignore constructor-super
   constructor(
     pattern: string | VimRegExp,
