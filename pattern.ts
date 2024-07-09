@@ -103,4 +103,4 @@ export function buildVimPatternTemplate(
  * console.log(regex.test("Foo")); // Output: true
  * ```
  */
-export const vimpattern = buildVimPatternTemplate({});
+export const vimpattern: VimPattern = buildVimPatternTemplate({});
