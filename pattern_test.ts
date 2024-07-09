@@ -1,5 +1,7 @@
 import {
+  assert,
   assertEquals,
+  assertFalse,
   assertInstanceOf,
   assertNotStrictEquals,
   assertObjectMatch,
@@ -14,8 +16,8 @@ import { VimRegExp } from "./regexp.ts";
 describe("vimpattern", () => {
   it("has valid @example in document.", () => {
     const regex = vimpattern`\k\+`.opt("g");
-    assertEquals(regex.vimSource, "\\k\\+");
-    assertEquals(regex.test("Foo"), true);
+    assert(regex.test("Foo"));
+    assertFalse(regex.test("!!!"));
   });
   it("returns VimRegExp object with specified pattern.", () => {
     const regex = vimpattern`foo`;

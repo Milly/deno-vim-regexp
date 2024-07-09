@@ -10,7 +10,8 @@ This module provides a conversion from Vim's regular expression format to Javasc
 ## Example
 
 ```typescript
-import { VimRegExp } from "https://deno.land/x/vim_regexp@VERSION/regexp.ts";
+import { VimRegExp } from "@milly/vimregexp/regexp";
+import { assert, assertFalse } from "@std/assert";
 
 const regex = new VimRegExp(
   "\\k\\+",
@@ -20,6 +21,6 @@ const regex = new VimRegExp(
   },
 );
 
-console.log(regex.test("Foo")); // Output: true
-console.log(regex.test("!!!")); // Output: false
+assert(regex.test("Foo"));
+assertFalse(regex.test("!!!"));
 ```

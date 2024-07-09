@@ -4,7 +4,7 @@
  * @module
  */
 
-import { VimRegExp, VimRegExpOptions } from "./regexp.ts";
+import { VimRegExp, type VimRegExpOptions } from "./regexp.ts";
 
 // deno-lint-ignore no-explicit-any
 type TemplateExpressions = any[];
@@ -96,11 +96,12 @@ export function buildVimPatternTemplate(
  *
  * @example
  * ```typescript
- * import { vimpattern } from "https://deno.land/x/vim_regexp@VERSION/pattern.ts";
+ * import { vimpattern } from "@milly/vimregexp/pattern";
+ * import { assert, assertFalse } from "@std/assert";
  *
  * const regex = vimpattern`\k\+`.opt("i");
- * console.log(regex.vimSource); // Output: "\\k\\+"
- * console.log(regex.test("Foo")); // Output: true
+ * assert(regex.test("Foo"));
+ * assertFalse(regex.test("!!!"));
  * ```
  */
 export const vimpattern: VimPattern = buildVimPatternTemplate({});
