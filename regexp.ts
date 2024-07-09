@@ -7,6 +7,9 @@
 import { DEFAULT_CHAR_PATTERNS, patternToCharClass, PatternType } from "./charclass.ts";
 import { UnsupportedSyntaxError, VimRegExpSyntaxError } from "./errors.ts";
 
+/**
+ * Optional parameters of {@linkcode VimRegExp}.
+ */
 export type VimRegExpOptions = {
   /**
    * Optional flags that allow for functionality like global searching.
@@ -21,6 +24,8 @@ export type VimRegExpOptions = {
    *
    * Note that the "s" and "v" flag is always specified.  Also, the "m" and "u"
    * flags cannot be specified by the user.
+   *
+   * @default {""}
    */
   flags?: string;
 
@@ -32,72 +37,79 @@ export type VimRegExpOptions = {
    * characters up to 255 are specified with this option.
    * For UTF-8 the characters 0xa0 to 0xff are included as well.
    *
-   * (default `"@,48-57,/,.,-,_,+,,,#,$,%,~,="`)
+   * @default {"@,48-57,/,.,-,_,+,,,#,$,%,~,="}
    */
   isfname?: string;
 
   /**
    * The characters given by this option are included in identifiers.
-   * It is also used for "\i" in a `pattern`.  See `isfname` for a
-   * description of the format of this option.  For '@' only characters up
-   * to 255 are used.
+   * It is also used for "\i" in a `pattern`.
+   * See {@linkcode VimRegExpOptions.isfname} for a description of the format
+   * of this option.  For '@' only characters up to 255 are used.
    *
-   * (default `"@,48-57,_,192-255"`)
+   * @default {"@,48-57,_,192-255"}
    */
   isident?: string;
 
   /**
    * Keywords are used in searching and recognizing with many commands:
-   * "w", "#", "[i", etc.  It is also used for "\k" in a `pattern`.  See
-   * `isfname` for a description of the format of this option.  For '@'
-   * characters above 255 check the "word" character class (any character
-   * that is not white space or punctuation).
+   * "w", "#", "[i", etc.  It is also used for "\k" in a `pattern`.
+   * See {@linkcode VimRegExpOptions.isfname} for a description of the format
+   * of this option.  For '@' characters above 255 check the "word" character
+   * class (any character that is not white space or punctuation).
    *
-   * (default `"@,48-57,_,192-255"`)
+   * @default {"@,48-57,_,192-255"}
    */
   iskeyword?: string;
 
   /**
    * The characters given by this option are displayed directly on the screen.
-   * It is also used for "\p" in a `pattern`.  See `isfname` for a description
-   * of the format of this option.
+   * It is also used for "\p" in a `pattern`.
+   * See {@linkcode VimRegExpOptions.isfname} for a description of the format
+   * of this option.
    *
    * Multi-byte characters 256 and above are always included, only the
    * characters up to 255 are specified with this option.
    *
-   * (default `"@,161-255"`)
+   * @default {"@,161-255"}
    */
   isprint?: string;
 
   /**
    * Changes the special characters that can be used in search patterns.
-   * (default `true`)
+   *
+   * @default {true}
    */
   magic?: boolean;
 
   /**
-   * Ignore case in search patterns.  (default `false`)
+   * Ignore case in search patterns.
    *
-   * Also see `smartcase`.  Can be overruled by using "\c" or "\C" in the
-   * pattern.  Also overruled by using "i" flag in the `flags` option.
+   * Also see {@linkcode VimRegExpOptions.smartcase}.  Can be overruled by
+   * using "\c" or "\C" in the `pattern`.  Also overruled by using "i" flag in
+   * the {@linkcode VimRegExpOptions.flags} option.
    *
    * Hierarchy of overrides:
    *   1. "i" in `flags` option
-   *   2. "\c" or "\C" in pattern
+   *   2. "\c" or "\C" in `pattern`
    *   3. `ignorecase` option
+   *
+   * @default {false}
    */
   ignorecase?: boolean;
 
   /**
-   * Override the `ignorecase` option if the search pattern contains upper
-   * case characters.  (default `false`)
+   * Override the {@linkcode VimRegExpOptions.ignorecase} option if the search
+   * pattern contains upper case characters.
    *
    * Only used when the search pattern is typed and `ignorecase` option is on.
+   *
+   * @default {false}
    */
   smartcase?: boolean;
 
   /**
-   * Enable string-match mode.  (default `false`)
+   * Enable string-match mode.
    *
    * A Vim's regexp pattern is normally used to find a match in the buffer
    * lines.  When a pattern is used to find a match in a String, almost
@@ -109,6 +121,8 @@ export type VimRegExpOptions = {
    * Don't forget that "^" will only match at the first character of the
    * String and "$" at the last character of the string.  They don't match
    * after or before a "\n".
+   *
+   * @default {false}
    *
    * @example
    * ```ts
@@ -148,10 +162,10 @@ export class VimRegExp extends RegExp {
   /**
    * Creates a new instance of the VimRegExp class.
    *
-   * @param pattern - Vim's regular expression pattern, or an object of VimRegExp.
-   * @param options - The options or the flags.
+   * @param pattern - Vim's regular expression pattern, or an object of `VimRegExp`.
+   * @param options - Optional parameters or {@linkcode VimRegExpOptions.flags}.
    *
-   * @throws VimRegExpSyntaxError
+   * @throws {VimRegExpSyntaxError}
    * Thrown if `pattern` is invalid format.
    * Thrown if `options` contains invalid value.
    */

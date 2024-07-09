@@ -7,9 +7,9 @@ import {
   assertNotMatch,
   assertStrictEquals,
   assertThrows,
-} from "https://deno.land/std@0.193.0/testing/asserts.ts";
-import { describe, it } from "https://deno.land/std@0.193.0/testing/bdd.ts";
-import { stub } from "https://deno.land/std@0.193.0/testing/mock.ts";
+} from "https://deno.land/std@0.224.0/testing/asserts.ts";
+import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
+import { stub } from "https://deno.land/std@0.224.0/testing/mock.ts";
 import { VimRegExp } from "./regexp.ts";
 import { UnsupportedSyntaxError, VimRegExpSyntaxError } from "./errors.ts";
 
