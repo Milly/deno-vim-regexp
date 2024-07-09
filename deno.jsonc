@@ -1,4 +1,13 @@
 {
+  "name": "@milly/vimregexp",
+  "version": "2.0.0",
+  "exports": {
+    ".": "./mod.ts",
+    "./charclass": "./charclass.ts",
+    "./errors": "./errors.ts",
+    "./pattern": "./pattern.ts",
+    "./regexp": "./regexp.ts"
+  },
   "tasks": {
     // Cache dependencies
     "cache": "deno cache **/*.ts",
@@ -16,6 +25,16 @@
     "coverage": "deno coverage .coverage",
     // Clear coverage data
     "coverage:clean": "rm -rf .coverage"
+  },
+  "publish": {
+    "include": [
+      "*.ts",
+      "LICENSE",
+      "README.md"
+    ],
+    "exclude": [
+      "*_test.ts"
+    ]
   },
   "fmt": {
     "lineWidth": 98,
