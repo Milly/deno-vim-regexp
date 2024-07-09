@@ -7,11 +7,12 @@ import {
   assertNotMatch,
   assertStrictEquals,
   assertThrows,
-} from "https://deno.land/std@0.224.0/testing/asserts.ts";
-import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
-import { stub } from "https://deno.land/std@0.224.0/testing/mock.ts";
-import { VimRegExp } from "./regexp.ts";
+} from "jsr:@std/assert";
+import { describe, it } from "jsr:@std/testing/bdd";
+import { stub } from "jsr:@std/testing/mock";
+
 import { UnsupportedSyntaxError, VimRegExpSyntaxError } from "./errors.ts";
+import { VimRegExp } from "./regexp.ts";
 
 /**
  * Make an assertion that `input` matches `actual` RegExp and result array

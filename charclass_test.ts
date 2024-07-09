@@ -1,10 +1,6 @@
-import {
-  assertEquals,
-  assertMatch,
-  assertNotMatch,
-  assertThrows,
-} from "https://deno.land/std@0.224.0/testing/asserts.ts";
-import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
+import { assertEquals, assertMatch, assertNotMatch, assertThrows } from "jsr:@std/assert";
+import { describe, it } from "jsr:@std/testing/bdd";
+
 import { DEFAULT_CHAR_PATTERNS, patternToCharClass } from "./charclass.ts";
 
 describe("DEFAULT_CHAR_PATTERNS", () => {
