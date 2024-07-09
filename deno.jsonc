@@ -1,5 +1,13 @@
 {
-  "lock": false,
+  "name": "@milly/vimregexp",
+  "version": "2.0.0-pre1",
+  "exports": {
+    ".": "./mod.ts",
+    "./charclass": "./charclass.ts",
+    "./errors": "./errors.ts",
+    "./pattern": "./pattern.ts",
+    "./regexp": "./regexp.ts"
+  },
   "tasks": {
     // Cache dependencies
     "cache": "deno cache **/*.ts",
@@ -10,7 +18,7 @@
     // Run all tests including documentation tests, browser tests, and check tasks
     "test:all": "deno task check && deno task test:doc",
     // Run documentation tests
-    "test:doc": "deno task test --doc --import-map=test_import_map.json",
+    "test:doc": "deno task test --doc",
     // Run tests with coverage, parallel execution and shuffling
     "test:coverage": "deno task coverage:clean && deno task test:doc --parallel --shuffle --coverage=.coverage",
     // Generate coverage report
@@ -18,8 +26,27 @@
     // Clear coverage data
     "coverage:clean": "rm -rf .coverage"
   },
+  "publish": {
+    "include": [
+      "*.ts",
+      "LICENSE",
+      "README.md"
+    ],
+    "exclude": [
+      "*_test.ts"
+    ]
+  },
   "fmt": {
     "lineWidth": 98,
     "proseWrap": "preserve"
+  },
+  "imports": {
+    "@milly/vimregexp": "./mod.ts",
+    "@milly/vimregexp/charclass": "./charclass.ts",
+    "@milly/vimregexp/errors": "./errors.ts",
+    "@milly/vimregexp/pattern": "./pattern.ts",
+    "@milly/vimregexp/regexp": "./regexp.ts",
+    "@std/assert": "jsr:@std/assert@^0.226.0",
+    "@std/testing": "jsr:@std/testing@^0.225.3"
   }
 }

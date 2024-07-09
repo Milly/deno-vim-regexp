@@ -40,10 +40,13 @@ export type PatternToCharClassOptions = {
  * import {
  *   DEFAULT_CHAR_PATTERNS,
  *   patternToCharClass,
- * } from "https://deno.land/x/vim_regexp@VERSION/charclass.ts";
+ * } from "@milly/vimregexp/charclass";
+ * import { assert, assertFalse } from "@std/assert";
  *
  * const charClass = patternToCharClass(DEFAULT_CHAR_PATTERNS.isprint);
- * console.log(charClass); // Output: "[\\x41-\\x5a\\x61-\\x7a\\xa1-\\xff]"
+ * const regex = new RegExp(`@${charClass}+@`, "v");
+ * assert(regex.test("@foo@"));
+ * assertFalse(regex.test("@!!!@"));
  * ```
  */
 export const DEFAULT_CHAR_PATTERNS: Readonly<Record<PatternType, string>> = {
@@ -109,14 +112,14 @@ const ASCII_WORD_CHARS = [
  *
  * @example
  * ```ts
- * import { patternToCharClass } from "https://deno.land/x/vim_regexp@VERSION/charclass.ts";
+ * import { patternToCharClass } from "@milly/vimregexp/charclass";
+ * import { assertEquals } from "@std/assert";
  *
  * const isfname = "@,48-57,/,.,-,_,+,,,#,$,%,~,=";
- * const chars = patternToCharClass(isfname, { type: 'isfname', unicode: true });
- * const fnameRegex = new RegExp(`${chars}+`, "v");
- *
- * const fname = "   /path/to/filename.ext  ".match(fnameRegex);
- * console.log(fname?.[0]); // Output: "/path/to/filename.ext"
+ * const charClass = patternToCharClass(isfname, { type: "isfname" });
+ * const fnameRegex = new RegExp(`${charClass}+`, "v");
+ * const fname = "   /path/to/filename.ext  ".match(fnameRegex)?.[0];
+ * assertEquals(fname, "/path/to/filename.ext");
  * ```
  *
  * @remarks

@@ -1,20 +1,23 @@
 import {
+  assert,
   assertEquals,
+  assertFalse,
   assertInstanceOf,
   assertNotStrictEquals,
   assertObjectMatch,
   assertThrows,
-} from "https://deno.land/std@0.224.0/testing/asserts.ts";
-import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
+} from "jsr:@std/assert";
+import { describe, it } from "jsr:@std/testing/bdd";
+
+import { VimRegExpSyntaxError } from "./errors.ts";
 import { buildVimPatternTemplate, vimpattern } from "./pattern.ts";
 import { VimRegExp } from "./regexp.ts";
-import { VimRegExpSyntaxError } from "./errors.ts";
 
 describe("vimpattern", () => {
   it("has valid @example in document.", () => {
     const regex = vimpattern`\k\+`.opt("g");
-    assertEquals(regex.vimSource, "\\k\\+");
-    assertEquals(regex.test("Foo"), true);
+    assert(regex.test("Foo"));
+    assertFalse(regex.test("!!!"));
   });
   it("returns VimRegExp object with specified pattern.", () => {
     const regex = vimpattern`foo`;

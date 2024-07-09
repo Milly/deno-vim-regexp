@@ -1,16 +1,21 @@
 import {
+  assert,
   assertEquals,
+  assertFalse,
   assertMatch,
   assertNotMatch,
   assertThrows,
-} from "https://deno.land/std@0.224.0/testing/asserts.ts";
-import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
+} from "jsr:@std/assert";
+import { describe, it } from "jsr:@std/testing/bdd";
+
 import { DEFAULT_CHAR_PATTERNS, patternToCharClass } from "./charclass.ts";
 
 describe("DEFAULT_CHAR_PATTERNS", () => {
   it("has valid @example in document.", () => {
     const charClass = patternToCharClass(DEFAULT_CHAR_PATTERNS.isprint);
-    assertEquals(charClass, "[\\x41-\\x5a\\x61-\\x7a\\xa1-\\xff]");
+    const regex = new RegExp(`@${charClass}+@`, "v");
+    assert(regex.test("@foo@"));
+    assertFalse(regex.test("@!!!@"));
   });
   describe(".isfname", () => {
     it("should be parsable.", () => {
@@ -50,7 +55,7 @@ describe("DEFAULT_CHAR_PATTERNS", () => {
 describe("patternToCharClass", () => {
   it("has valid @example in document.", () => {
     const isfname = "@,48-57,/,.,-,_,+,,,#,$,%,~,=";
-    const fnameRegex = new RegExp(`${patternToCharClass(isfname)}+`);
+    const fnameRegex = new RegExp(`${patternToCharClass(isfname)}+`, "v");
     const fname = "   /path/to/filename.ext  ".match(fnameRegex);
     assertEquals(fname?.[0], "/path/to/filename.ext");
   });

@@ -7,11 +7,12 @@ import {
   assertNotMatch,
   assertStrictEquals,
   assertThrows,
-} from "https://deno.land/std@0.224.0/testing/asserts.ts";
-import { describe, it } from "https://deno.land/std@0.224.0/testing/bdd.ts";
-import { stub } from "https://deno.land/std@0.224.0/testing/mock.ts";
-import { VimRegExp } from "./regexp.ts";
+} from "jsr:@std/assert";
+import { describe, it } from "jsr:@std/testing/bdd";
+import { stub } from "jsr:@std/testing/mock";
+
 import { UnsupportedSyntaxError, VimRegExpSyntaxError } from "./errors.ts";
+import { VimRegExp } from "./regexp.ts";
 
 /**
  * Make an assertion that `input` matches `actual` RegExp and result array
@@ -29,12 +30,29 @@ function assertMatchResult(
   return assertEquals(result?.slice(), expected, msg);
 }
 
+describe("VimRegExpOptions", () => {
+  describe(".stringMatch", () => {
+    it("has valid @example in document.", () => {
+      const lines = "aaaa\nxxxx";
+      const regexBuffer = new VimRegExp("^..", "g");
+      const regexString = new VimRegExp("^..", { stringMatch: true, flags: "g" });
+      assertEquals(
+        [...lines.matchAll(regexBuffer)].map(([v]) => v),
+        ["aa", "xx"],
+      );
+      assertEquals(
+        [...lines.matchAll(regexString)].map(([v]) => v),
+        ["aa"],
+      );
+    });
+  });
+});
+
 describe("VimRegExp", () => {
   it("has valid @example in document.", () => {
     const regex = new VimRegExp("\\k\\+", { flags: "i" });
-    assertEquals(regex.vimSource, "\\k\\+");
-    assertEquals(regex.test("Foo"), true);
-    assertEquals(regex.test("!!!"), false);
+    assert(regex.test("Foo"));
+    assertFalse(regex.test("!!!"));
   });
   describe("constructor", () => {
     describe("arguments", () => {

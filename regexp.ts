@@ -4,7 +4,7 @@
  * @module
  */
 
-import { DEFAULT_CHAR_PATTERNS, patternToCharClass, PatternType } from "./charclass.ts";
+import { DEFAULT_CHAR_PATTERNS, patternToCharClass, type PatternType } from "./charclass.ts";
 import { UnsupportedSyntaxError, VimRegExpSyntaxError } from "./errors.ts";
 
 /**
@@ -126,17 +126,20 @@ export type VimRegExpOptions = {
    *
    * @example
    * ```ts
-   * import { VimRegExp } from "https://deno.land/x/vim_regexp@VERSION/regexp.ts";
+   * import { VimRegExp } from "@milly/vimregexp/regexp";
+   * import { assertEquals } from "@std/assert";
    *
    * const lines = "aaaa\nxxxx";
-   * const regexBuffer = new VimRegExp("^..");
-   * console.log(
+   * const regexBuffer = new VimRegExp("^..", "g");
+   * const regexString = new VimRegExp("^..", { stringMatch: true, flags: "g" });
+   * assertEquals(
    *   [...lines.matchAll(regexBuffer)].map(([v]) => v),
-   * ); // Output: ["aa", "xx"]
-   * const regexString = new VimRegExp("^..", { stringMatch: true });
-   * console.log(
+   *   ["aa", "xx"],
+   * );
+   * assertEquals(
    *   [...lines.matchAll(regexString)].map(([v]) => v),
-   * ); // Output: ["aa"]
+   *   ["aa"],
+   * );
    * ```
    */
   stringMatch?: boolean;
@@ -147,12 +150,12 @@ export type VimRegExpOptions = {
  *
  * @example
  * ```ts
- * import { VimRegExp } from "https://deno.land/x/vim_regexp@VERSION/regexp.ts";
+ * import { VimRegExp } from "@milly/vimregexp/regexp";
+ * import { assert, assertFalse } from "@std/assert";
  *
  * const regex = new VimRegExp("\\k\\+", { flags: "i" });
- * console.log(regex.vimSource); // Output: "\\k\\+"
- * console.log(regex.test("Foo")); // Output: true
- * console.log(regex.test("!!!")); // Output: false
+ * assert(regex.test("Foo"));
+ * assertFalse(regex.test("!!!"));
  * ```
  */
 export class VimRegExp extends RegExp {
@@ -169,6 +172,7 @@ export class VimRegExp extends RegExp {
    * Thrown if `pattern` is invalid format.
    * Thrown if `options` contains invalid value.
    */
+  // @ts-ignore: TS2377: 'super' call in try-catch
   // deno-lint-ignore constructor-super
   constructor(
     pattern: string | VimRegExp,
