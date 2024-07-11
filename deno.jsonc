@@ -1,6 +1,6 @@
 {
   "name": "@milly/vimregexp",
-  "version": "2.0.0-pre1",
+  "version": "2.0.0",
   "exports": {
     ".": "./mod.ts",
     "./charclass": "./charclass.ts",
@@ -46,7 +46,7 @@
     "@milly/vimregexp/errors": "./errors.ts",
     "@milly/vimregexp/pattern": "./pattern.ts",
     "@milly/vimregexp/regexp": "./regexp.ts",
-    "@std/assert": "jsr:@std/assert@^0.226.0",
+    "@std/assert": "jsr:@std/assert@^1.0.0",
     "@std/testing": "jsr:@std/testing@^0.225.3"
   }
 }
